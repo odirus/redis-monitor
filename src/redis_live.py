@@ -29,7 +29,7 @@ class redis_live(daemonized):
         (r"/api/servers", ServerListController),
         (r"/api/info", InfoController),
         (r"/api/status", StatusController),
-         (r"/api/infolist",InfoListController),
+        (r"/api/infolist",InfoListController),
         (r"/api/commands", CommandsController),
         (r"/api/settings",SettingsController),
         (r"/api/slowlog",SlowlogController),
