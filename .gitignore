@@ -31,3 +31,4 @@ pip-log.txt
 *.sublime-workspace
 
 .idea
+src/redis_live.conf
