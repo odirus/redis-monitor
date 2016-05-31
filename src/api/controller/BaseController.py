@@ -1,3 +1,4 @@
+from api.util import settings
 from dataprovider.dataprovider import RedisLiveDataProvider
 import tornado.ioloop
 import tornado.web
@@ -5,12 +6,14 @@ import dateutil.parser
 import redis
 
 class BaseController(tornado.web.RequestHandler):
-
     stats_provider = RedisLiveDataProvider.get_provider()
     
     def getStatsPerServer(self, server):
         try:
-            connection = redis.Redis(host=server[0], port=(int)(server[1]), password=server[2], db=0,socket_timeout=0.1)
+            data = settings.get_redis_servers_by_server_port()
+            ep = server[0] + ":" + str(server[1])
+            password = data.get(ep)["password"]
+            connection = redis.Redis(host=server[0], port=(int)(server[1]), password=password, db=0,socket_timeout=0.1)
             info = connection.info()
             # when instances down ,this maybe slowly...
             info.update({

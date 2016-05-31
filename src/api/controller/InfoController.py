@@ -11,7 +11,6 @@ class InfoController(BaseController):
         """Serves a GET request.
         """
         server = self.get_argument("server").split(':')
-        
         redis_info = self.getStatsPerServer(server)
         databases=[]
 

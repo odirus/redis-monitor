@@ -17,6 +17,15 @@ def get_redis_servers():
         data.append(server)
     return data
 
+def get_redis_servers_by_server_port():
+    server_data = {}
+
+    data = get_redis_servers()
+    for server in data:
+        server_data[server["ep"]] = server
+
+    return server_data
+
 def get_redis_alerturi():
     config = get_settings()
     return config["sms_alert"]
