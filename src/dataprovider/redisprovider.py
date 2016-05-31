@@ -15,6 +15,7 @@ class RedisStatsProvider(object):
         self.server = stats_server["server"]
         self.port = stats_server["port"]
         self.password = stats_server["password"]
+        self.expire_days = stats_server["expire_days"]
         self.conn = redis.StrictRedis(host=self.server, port=self.port, password=self.password, db=0)
 
     def save_keys_Info(self, server,rediskey,timestamp, expires, persists,expired,evicted
@@ -30,7 +31,9 @@ class RedisStatsProvider(object):
                          hit_rate,
                          peak,
                          used)
-        self.conn.zadd(server +':'+ rediskey, score, data)
+        key = server +':'+ rediskey
+        self.conn.zadd(key, score, data)
+        self.conn.zremrangebyscore(key, "-inf",  (int)(time.time()) - 24 * 3600 * self.expire_days)
             
     def get_keys_info(self, server, from_date, to_date):
         data = []
@@ -60,7 +63,9 @@ class RedisStatsProvider(object):
     def save_status_info(self, server, timestamp, data):
         timestamp=datetime2_unix_int(timestamp)
         data['timestamp']=timestamp
-        self.conn.zadd(server + ":status", timestamp, json.dumps(data))
+        key = server + ":status"
+        self.conn.zadd(key, timestamp, json.dumps(data))
+        self.conn.zremrangebyscore(key, "-inf", (int)(time.time()) - 24 * 3600 * self.expire_days)
 
     def get_status_info(self, server, from_date, to_date):
         data = []
